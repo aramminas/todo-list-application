@@ -129,7 +129,7 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
                       <IconButton
                         onClick={handleEdit?.(row.id)}
                         aria-label="edit"
-                        size="large"
+                        size="small"
                         color="primary"
                       >
                         <EditIcon />
@@ -137,7 +137,7 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
                       <IconButton
                         onClick={handleDeleteTodo(row.id)}
                         aria-label="delete"
-                        size="large"
+                        size="small"
                         color="error"
                       >
                         <DeleteIcon />
