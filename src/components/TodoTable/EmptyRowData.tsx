@@ -4,7 +4,7 @@ import { StyledTableCell, StyledTableRow } from "@/components/TodoTable/styledCo
 const EmptyRowData = () => {
   return (
     <StyledTableRow>
-      <StyledTableCell colSpan={5}>
+      <StyledTableCell colSpan={6}>
         <NoData />
       </StyledTableCell>
     </StyledTableRow>

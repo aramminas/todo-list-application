@@ -13,11 +13,11 @@ import NoData from "@/components/basic/NoData";
 import PageWrapper from "@/components/PageWrapper";
 import StatusIcon from "@/components/basic/StatusIcon";
 import { getStatusTextColor, getStatusColor } from "@/helpers";
+import { useHistoryTodos } from "@/hooks/useHistoryTodos";
 import { dateTimeFormat } from "@/constants";
-import { TodoType } from "@/components/types";
 
 function History() {
-  const todos: TodoType[] | [] = [];
+  const todos = useHistoryTodos();
 
   return (
     <PageWrapper title="Todo history">

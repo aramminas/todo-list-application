@@ -14,3 +14,11 @@ export enum TodoStatus {
   Overdue = "Overdue",
   Removed = "Removed",
 }
+
+export type TodoDataType = Omit<TodoType, "id" | "status" | "updatedAt" | "createdAt">;
+
+export const resetInitialData = {
+  title: "",
+  description: "",
+  deadline: "",
+};

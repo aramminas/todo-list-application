@@ -1,6 +1,8 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, useEffect } from "react";
 import * as yup from "yup";
+import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import Box from "@mui/material/Box";
@@ -8,7 +10,8 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 
 import FormDatePicker from "@/components/TodoFormDialog/components/FormDatePicker";
-import { TodoType, TodoStatus } from "@/components/types";
+import { TodoType, TodoStatus, TodoDataType, resetInitialData } from "@/components/types";
+import { addTodo, updateTodo } from "@/state/todos/todoPendingSlice";
 
 const schema = yup.object().shape({
   title: yup.string().min(2).max(60).required(),
@@ -20,10 +23,14 @@ const schema = yup.object().shape({
 });
 
 interface TodoFormProps {
-  setTodos: (value: ((prevState: TodoType[]) => TodoType[]) | TodoType[]) => void;
+  open: boolean;
+  todo: TodoType | null;
+  onClose: () => void;
 }
 
-const TodoForm = forwardRef(({ setTodos }: TodoFormProps, ref) => {
+const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
+  const dispatch = useDispatch();
+
   const {
     control,
     register,
@@ -32,18 +39,50 @@ const TodoForm = forwardRef(({ setTodos }: TodoFormProps, ref) => {
     reset,
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: useMemo(() => {
+      return {
+        title: todo?.title,
+        description: todo?.description,
+        deadline: todo?.deadline,
+      };
+    }, [todo]),
   });
 
-  const onSubmitHandler = (data) => {
-    setTodos((prevState) => {
-      data.id = `${Math.random()}-${Math.random()}-${Math.random()}`;
-      data.updatedAt = new Date();
-      data.createdAt = new Date();
-      data.status = TodoStatus.Pending;
+  useEffect(() => {
+    if (!open) {
+      reset(resetInitialData);
+    }
 
-      return [...prevState, data];
-    });
-    reset();
+    if (todo) {
+      reset(todo);
+    }
+  }, [todo, open]);
+
+  const onSubmitHandler = (data: TodoDataType) => {
+    // edit
+    if (todo?.id) {
+      const updateTodoData: TodoType = {
+        ...todo,
+        ...data,
+        updatedAt: new Date(),
+      };
+
+      dispatch(updateTodo(updateTodoData));
+      onClose();
+      return;
+    }
+
+    // create
+    const newTodoData: TodoType = {
+      ...data,
+      id: uuidv4(),
+      updatedAt: new Date(),
+      createdAt: new Date(),
+      status: TodoStatus.Pending,
+    };
+
+    dispatch(addTodo(newTodoData));
+    onClose();
   };
 
   return (

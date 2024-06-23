@@ -13,15 +13,12 @@ import { TodoType } from "@/components/types";
 
 interface TodoFormDialogProps {
   open: boolean;
-  setOpen: (value: ((prevState: boolean) => boolean) | boolean) => void;
-  setTodos: (value: ((prevState: TodoType[]) => TodoType[]) | TodoType[]) => void;
+  todo: TodoType | null;
+  handleClose: () => void;
 }
 
-const TodoFormDialog = ({ open, setOpen, setTodos }: TodoFormDialogProps) => {
+const TodoFormDialog = ({ open, handleClose, todo }: TodoFormDialogProps) => {
   const formRef = useRef<HTMLFormElement>();
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleCreateTodo = () => {
     formRef?.current?.requestSubmit();
@@ -39,13 +36,13 @@ const TodoFormDialog = ({ open, setOpen, setTodos }: TodoFormDialogProps) => {
         <MainTitle text="Create new Todo" variant="body" />
       </DialogTitle>
       <DialogContent dividers>
-        <TodoForm ref={formRef} setTodos={setTodos} />
+        <TodoForm ref={formRef} open={open} todo={todo} onClose={handleClose} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Close
         </Button>
-        <Button onClick={handleCreateTodo}>Create</Button>
+        <Button onClick={handleCreateTodo}>{!!todo ? "Edit" : "Create"}</Button>
       </DialogActions>
     </Dialog>
   );
