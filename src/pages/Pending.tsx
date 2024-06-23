@@ -11,13 +11,7 @@ function Pending() {
 
   return (
     <PageWrapper title="Pending todos">
-      <TodoTable
-        page={1}
-        limit={10}
-        rows={todos}
-        setUrlParam={() => {}}
-        bgColor={getStatusTextColor(TodoStatus.Pending)}
-      />
+      <TodoTable rows={todos} bgColor={getStatusTextColor(TodoStatus.Pending)} />
     </PageWrapper>
   );
 }

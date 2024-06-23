@@ -1,6 +1,6 @@
 export const appName = "Todo application";
 export const drawerWidth: number = 240;
-export const tableRowHeight: number = 53;
+export const tableRowHeight: number = 81;
 export const dateFormat: string = "DD/MM/YYYY";
 export const dateTimeFormat: string = "HH:mm:ss DD/MM/YYYY";
 

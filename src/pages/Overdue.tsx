@@ -11,13 +11,7 @@ function Overdue() {
 
   return (
     <PageWrapper title="Overdue todos">
-      <TodoTable
-        page={1}
-        limit={10}
-        rows={todos}
-        setUrlParam={() => {}}
-        bgColor={getStatusTextColor(TodoStatus.Overdue)}
-      />
+      <TodoTable rows={todos} bgColor={getStatusTextColor(TodoStatus.Overdue)} />
     </PageWrapper>
   );
 }

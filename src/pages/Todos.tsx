@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation, useSearchParams } from "react-router-dom";
 
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,14 +14,8 @@ import { RootState } from "@/state/store";
 
 function Todos() {
   const dispatch = useDispatch();
-  const location = useLocation();
   const [openForm, setOpenForm] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<TodoType | null>(null);
-  const [, setSearchParams] = useSearchParams();
-  const query = new URLSearchParams(location.search);
-  const page = parseInt(query.get("page") || "1", 20);
-  const limit = parseInt(query.get("limit") || "10", 10);
-
   const todos = useSelector((state: RootState) => state.todoPending.data);
 
   useEffect(() => {
@@ -38,12 +31,6 @@ function Todos() {
       });
     })(todos);
   }, []);
-
-  const setUrlParam = (param: string, value: string) => {
-    value && (value !== "0" || value !== "") ? query.set(param, value) : query.delete(param);
-
-    setSearchParams(query);
-  };
 
   const handleClickOpenFormDialog = () => {
     setOpenForm(true);
@@ -74,14 +61,7 @@ function Todos() {
         </Button>
       }
     >
-      <TodoTable
-        page={page}
-        limit={limit}
-        rows={todos}
-        setUrlParam={setUrlParam}
-        handleEdit={handleOpenEditDialog}
-        pageStatus={TodoStatus.Pending}
-      />
+      <TodoTable rows={todos} handleEdit={handleOpenEditDialog} pageStatus={TodoStatus.Pending} />
       <TodoFormDialog
         open={openForm}
         handleClose={handleClickCloseFormDialog}

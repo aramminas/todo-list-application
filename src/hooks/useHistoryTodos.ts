@@ -11,8 +11,8 @@ export const useHistoryTodos = () => {
 
   return useMemo(() => {
     // sort items by last updated time
-    return [...todoPending, ...todoCompleted, ...todoOverdue, ...todosRemoved].sort(
-      (x, y) => x.updatedAt - y.updatedAt,
-    );
+    return [...todoPending, ...todoCompleted, ...todoOverdue, ...todosRemoved]
+      .sort((x, y) => x.updatedAt - y.updatedAt)
+      .reverse();
   }, [todoPending, todoCompleted, todoOverdue, todosRemoved]);
 };

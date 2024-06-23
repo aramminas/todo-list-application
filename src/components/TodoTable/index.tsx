@@ -27,39 +27,25 @@ import { addToCompleted } from "@/state/todos/todoCompletedSlice";
 import { StyledTableCell, StyledTableRow } from "@/components/TodoTable/styledComponents";
 
 interface TodoTable {
-  page: number;
-  limit: number;
   rows: TodoType[];
-  setUrlParam: (param: string, value: string) => void;
   bgColor?: string;
-  handleEdit: (id: string) => () => void;
-  pageStatus: TodoStatus;
+  handleEdit?: (id: string) => () => void;
+  pageStatus?: TodoStatus;
 }
 
-const TodoTable = ({
-  page,
-  limit,
-  setUrlParam,
-  rows,
-  bgColor,
-  handleEdit,
-  pageStatus,
-}: TodoTable) => {
+const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
   const dispatch = useDispatch();
   const [color] = useState(bgColor || "");
-  const [currentPage, setCurrentPage] = useState(page - 1);
-  const [rowsPerPage, setRowsPerPage] = useState(limit || 10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setCurrentPage(newPage);
-    setUrlParam("page", String(newPage));
   };
 
   const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
-    const limit = event.target.value;
     setRowsPerPage(+event.target.value);
     setCurrentPage(0);
-    setUrlParam("limit", limit);
   };
 
   const handleDeleteTodo = (id: string) => () => {
@@ -141,7 +127,7 @@ const TodoTable = ({
                   {pageStatus === TodoStatus.Pending && (
                     <StyledTableCell align="right">
                       <IconButton
-                        onClick={handleEdit(row.id)}
+                        onClick={handleEdit?.(row.id)}
                         aria-label="edit"
                         size="large"
                         color="primary"

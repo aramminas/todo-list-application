@@ -11,13 +11,7 @@ function Trash() {
 
   return (
     <PageWrapper title="Removed todos">
-      <TodoTable
-        page={1}
-        limit={10}
-        rows={todos}
-        setUrlParam={() => {}}
-        bgColor={getStatusTextColor(TodoStatus.Removed)}
-      />
+      <TodoTable rows={todos} bgColor={getStatusTextColor(TodoStatus.Removed)} />
     </PageWrapper>
   );
 }
