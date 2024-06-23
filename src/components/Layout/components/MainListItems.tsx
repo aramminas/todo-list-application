@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -6,9 +7,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 
 import { routeItems } from "@/components/Layout/routeMap";
 
-type MainListItemsProps = {
+interface MainListItemsProps {
   pathname: string;
-};
+}
 
 const MainListItems = ({ pathname }: MainListItemsProps) => (
   <List component="nav">
