@@ -1,4 +1,5 @@
 import { forwardRef, useMemo, useEffect } from "react";
+import dayjs from "dayjs";
 import * as yup from "yup";
 import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
@@ -9,17 +10,15 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 
+import { AppDispatch } from "@/state/store";
 import FormDatePicker from "@/components/TodoFormDialog/components/FormDatePicker";
-import { TodoType, TodoStatus, TodoDataType, resetInitialData } from "@/components/types";
-import { addTodo, updateTodo } from "@/state/todos/todoPendingSlice";
+import { TodoType, TodoStatus, resetInitialData, PartialTodoDataType } from "@/components/types";
+import { addPendingTodo, updatePendingTodo } from "@/state/todos/todoPendingSlice";
 
 const schema = yup.object().shape({
   title: yup.string().min(2).max(60).required(),
   description: yup.string().matches(/^(|.{4,})$/, "description must be at least 4 characters"),
-  deadline: yup
-    .date()
-    .transform((curr, orig) => (orig === "" ? null : curr))
-    .nullable(),
+  deadline: yup.date().transform((curr, orig) => (orig === "" ? null : curr)),
 });
 
 interface TodoFormProps {
@@ -29,7 +28,7 @@ interface TodoFormProps {
 }
 
 const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     control,
@@ -41,7 +40,7 @@ const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
     resolver: yupResolver(schema),
     defaultValues: useMemo(() => {
       return {
-        title: todo?.title,
+        title: todo?.title || "",
         description: todo?.description,
         deadline: todo?.deadline,
       };
@@ -58,30 +57,38 @@ const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
     }
   }, [todo, open]);
 
-  const onSubmitHandler = (data: TodoDataType) => {
+  const onSubmitHandler = (data: PartialTodoDataType) => {
+    // convert date to end of day
+    const endOfDay: Date | undefined = data.deadline
+      ? dayjs(data.deadline).endOf("day").toDate()
+      : undefined;
+
     // edit
     if (todo?.id) {
       const updateTodoData: TodoType = {
         ...todo,
         ...data,
+        deadline: endOfDay,
         updatedAt: new Date(),
       };
 
-      dispatch(updateTodo(updateTodoData));
+      dispatch(updatePendingTodo(updateTodoData));
       onClose();
       return;
     }
 
     // create
     const newTodoData: TodoType = {
-      ...data,
       id: uuidv4(),
+      ...data,
+      deadline: endOfDay,
       updatedAt: new Date(),
       createdAt: new Date(),
       status: TodoStatus.Pending,
+      description: data.description || "",
     };
 
-    dispatch(addTodo(newTodoData));
+    dispatch(addPendingTodo(newTodoData));
     onClose();
   };
 
@@ -99,7 +106,6 @@ const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
               required
               fullWidth
               autoFocus
-              name="title"
               label="Title"
               error={!!errors?.title?.message}
               helperText={!!errors?.title?.message && errors?.title?.message}
@@ -111,7 +117,6 @@ const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
               rows={4}
               multiline
               fullWidth
-              name="description"
               label="Description"
               error={!!errors?.description?.message}
               helperText={!!errors?.description?.message && errors?.description?.message}
@@ -124,7 +129,7 @@ const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
               control={control}
               disablePast={true}
               error={!!errors?.deadline?.message}
-              helperText={!!errors?.deadline?.message && errors?.deadline?.message}
+              helperText={!!errors?.deadline?.message ? errors?.deadline?.message : ""}
             />
           </Grid>
         </Grid>

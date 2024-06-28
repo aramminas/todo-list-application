@@ -16,30 +16,35 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 
+import { AppDispatch } from "@/state/store";
 import StatusChip from "@/components/basic/StatusChip";
 import { tableRowHeight, dateFormat } from "@/constants";
 import { TodoType, TodoStatus } from "@/components/types";
-import { removeTodo } from "@/state/todos/todoPendingSlice";
 import { addToRemoved } from "@/state/todos/todoRemovedSlice";
 import EmptyRowData from "@/components/TodoTable/EmptyRowData";
 import EllipsisTooltip from "@/components/basic/EllipsisTooltip";
 import { addToCompleted } from "@/state/todos/todoCompletedSlice";
+import { removePendingTodo } from "@/state/todos/todoPendingSlice";
 import { StyledTableCell, StyledTableRow } from "@/components/TodoTable/styledComponents";
 
 interface TodoTable {
   rows: TodoType[];
   bgColor?: string;
+  loading?: boolean;
   handleEdit?: (id: string) => () => void;
   pageStatus?: TodoStatus;
 }
 
-const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
-  const dispatch = useDispatch();
+const TodoTable = ({ rows, bgColor, loading, handleEdit, pageStatus }: TodoTable) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [color] = useState(bgColor || "");
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (
+    _: MouseEvent<HTMLButtonElement, globalThis.MouseEvent> | null,
+    newPage: number,
+  ) => {
     setCurrentPage(newPage);
   };
 
@@ -53,7 +58,7 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
     if (findRemovedTodo) {
       dispatch(addToRemoved(findRemovedTodo));
     }
-    dispatch(removeTodo(id));
+    dispatch(removePendingTodo(id));
   };
 
   const handleCompleted = (
@@ -65,7 +70,7 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
       if (findCompletedTodo) {
         dispatch(addToCompleted(findCompletedTodo));
       }
-      dispatch(removeTodo(id));
+      dispatch(removePendingTodo(id));
     }
   };
 
@@ -79,20 +84,20 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
           <TableHead>
             <TableRow sx={{ fontWeight: "bold" }}>
               {pageStatus === TodoStatus.Pending && !!rows.length && (
-                <StyledTableCell bgcolor={color} />
+                <StyledTableCell color={color} />
               )}
-              <StyledTableCell bgcolor={color}>Title</StyledTableCell>
-              <StyledTableCell align="right" bgcolor={color}>
+              <StyledTableCell color={color}>Title</StyledTableCell>
+              <StyledTableCell align="right" color={color}>
                 Description
               </StyledTableCell>
-              <StyledTableCell align="right" bgcolor={color}>
+              <StyledTableCell align="right" color={color}>
                 Deadline
               </StyledTableCell>
-              <StyledTableCell align="right" bgcolor={color}>
+              <StyledTableCell align="right" color={color}>
                 Status
               </StyledTableCell>
               {pageStatus === TodoStatus.Pending && (
-                <StyledTableCell align="right" bgcolor={color}>
+                <StyledTableCell align="right" color={color}>
                   Options
                 </StyledTableCell>
               )}
@@ -106,7 +111,11 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
                   {pageStatus === TodoStatus.Pending ? (
                     <>
                       <StyledTableCell component="th" scope="row">
-                        <Checkbox color="success" onClick={(ev) => handleCompleted(ev, row.id)} />
+                        <Checkbox
+                          color="success"
+                          disabled={loading}
+                          onClick={(ev) => handleCompleted(ev, row.id)}
+                        />
                       </StyledTableCell>
                       <StyledTableCell align="left">{row.title}</StyledTableCell>
                     </>
@@ -131,6 +140,7 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
                         aria-label="edit"
                         size="small"
                         color="primary"
+                        disabled={loading}
                       >
                         <EditIcon />
                       </IconButton>
@@ -139,6 +149,7 @@ const TodoTable = ({ rows, bgColor, handleEdit, pageStatus }: TodoTable) => {
                         aria-label="delete"
                         size="small"
                         color="error"
+                        disabled={loading}
                       >
                         <DeleteIcon />
                       </IconButton>

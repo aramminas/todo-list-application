@@ -33,7 +33,7 @@ const TodoFormDialog = ({ open, handleClose, todo }: TodoFormDialogProps) => {
       fullWidth
     >
       <DialogTitle>
-        <MainTitle text="Create new Todo" variant="body" />
+        <MainTitle text="Create new Todo" variant="caption" fontSize={20} />
       </DialogTitle>
       <DialogContent dividers>
         <TodoForm ref={formRef} open={open} todo={todo} onClose={handleClose} />

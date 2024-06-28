@@ -7,25 +7,26 @@ import AddIcon from "@mui/icons-material/Add";
 import TodoTable from "@/components/TodoTable";
 import PageWrapper from "@/components/PageWrapper";
 import TodoFormDialog from "@/components/TodoFormDialog";
+import AlertLoadingWrapper from "@/components/basic/AlertLoadingWrapper";
 import { TodoType, TodoStatus } from "@/components/types";
-import { removeTodo } from "@/state/todos/todoPendingSlice";
+import { removePendingTodo } from "@/state/todos/todoPendingSlice";
 import { addToOverdue } from "@/state/todos/todoOverdueSlice";
-import { RootState } from "@/state/store";
+import { RootState, AppDispatch } from "@/state/store";
 
 function Todos() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [openForm, setOpenForm] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<TodoType | null>(null);
-  const todos = useSelector((state: RootState) => state.todoPending.data);
+  const { data: todos, error, loading } = useSelector((state: RootState) => state.todoPending);
 
   useEffect(() => {
-    (() => {
+    ((todos) => {
       todos.forEach((todo) => {
         if (todo.deadline) {
           // check and automatically move overdue tasks to the overdue section
-          if (new Date(todo.deadline) < new Date()) {
+          if (new Date(todo.deadline).getTime() < new Date().getTime()) {
             dispatch(addToOverdue(todo));
-            dispatch(removeTodo(todo.id));
+            dispatch(removePendingTodo(todo.id));
           }
         }
       });
@@ -61,7 +62,13 @@ function Todos() {
         </Button>
       }
     >
-      <TodoTable rows={todos} handleEdit={handleOpenEditDialog} pageStatus={TodoStatus.Pending} />
+      <AlertLoadingWrapper message={error} loading={loading} />
+      <TodoTable
+        rows={todos}
+        loading={loading}
+        handleEdit={handleOpenEditDialog}
+        pageStatus={TodoStatus.Pending}
+      />
       <TodoFormDialog
         open={openForm}
         handleClose={handleClickCloseFormDialog}

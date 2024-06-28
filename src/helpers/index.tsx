@@ -1,7 +1,7 @@
 import { textColors } from "@/constants";
 import { TodoStatus } from "@/components/types";
 
-export const getStatusColor = (status: string) => {
+export const getStatusColor = (status?: string) => {
   switch (status) {
     case TodoStatus.Pending:
       return "secondary";
@@ -12,7 +12,7 @@ export const getStatusColor = (status: string) => {
     case TodoStatus.Removed:
       return "error";
     default:
-      return "grey";
+      return "primary";
   }
 };
 

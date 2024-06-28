@@ -1,36 +1,37 @@
 import dayjs from "dayjs";
-import { Control, FieldValues, Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import { dateFormat } from "@/constants";
+import { PartialTodoDataType, TodoDataType } from "@/components/types";
 
-interface CustomDatePickerProps<T> {
-  name: Extract<keyof T, string>;
-  control: Control<FieldValues, any>;
+interface DatePickerProps {
+  name: keyof TodoDataType;
+  control?: Control<PartialTodoDataType, any>;
   error?: boolean;
   helperText?: string;
   defaultValue?: Date;
   disablePast?: boolean;
 }
 
-const FormDatePicker = <T,>({
+const FormDatePicker = ({
   name,
   control,
   error,
   helperText = "",
-  defaultValue = "",
+  defaultValue,
   disablePast,
   ...rest
-}: CustomDatePickerProps<T>) => {
+}: DatePickerProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className={"mui-date"}>
         <Controller
           name={name}
-          control={control as Control<FieldValues, any>}
+          control={control}
           defaultValue={defaultValue}
           render={({ field: { onChange, value } }) => (
             <DatePicker

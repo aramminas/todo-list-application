@@ -2,10 +2,10 @@ import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 
-export const StyledTableCell = styled(TableCell)(({ theme, bgcolor }) => ({
+export const StyledTableCell = styled(TableCell)(({ theme, color }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: bgcolor || theme.palette.primary.main,
-    color: theme.palette.common.white,
+    backgroundColor: color || theme?.palette?.primary?.main,
+    color: theme?.palette?.common?.white,
     fontWeight: "bold",
     fontSize: 16,
   },

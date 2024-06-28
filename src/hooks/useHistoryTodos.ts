@@ -12,7 +12,7 @@ export const useHistoryTodos = () => {
   return useMemo(() => {
     // sort items by last updated time
     return [...todoPending, ...todoCompleted, ...todoOverdue, ...todosRemoved]
-      .sort((x, y) => x.updatedAt - y.updatedAt)
+      .sort((x, y) => new Date(x.updatedAt).getTime() - new Date(y.updatedAt).getTime())
       .reverse();
   }, [todoPending, todoCompleted, todoOverdue, todosRemoved]);
 };

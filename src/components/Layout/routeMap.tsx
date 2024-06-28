@@ -13,7 +13,6 @@ import History from "@/pages/History";
 import Trash from "@/pages/Trash";
 
 import { RouteItems } from "@/types";
-import React from "react";
 
 export const routeItems: RouteItems = [
   {
