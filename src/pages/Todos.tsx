@@ -30,7 +30,7 @@ function Todos() {
           // check and automatically move overdue tasks to the overdue section
           if (new Date(todo.deadline).getTime() < new Date().getTime()) {
             dispatch(addToOverdue(todo));
-            dispatch(removePendingTodo(todo.id));
+            dispatch(removePendingTodo({ todo: todo, status: TodoStatus.Overdue }));
           }
         }
       });
