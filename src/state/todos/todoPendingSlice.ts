@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
 
-import { TodoType } from "@/components/types";
+import { TodoType, TodoStatus } from "@/components/types";
+import { getTodos, createTodo, updateTodo } from "@/api/requests";
 
 interface TodoPendingState {
   data: TodoType[];
@@ -18,9 +19,30 @@ const initialState: TodoPendingState = {
 const todoPendingSlice = createSlice({
   name: "todoPending",
   initialState,
-  reducers: { _: () => {} },
+  reducers: {
+    setPendingTodos: (state, action: PayloadAction<TodoType[]>) => {
+      state.data = action.payload;
+    },
+  },
   extraReducers: (builder: ActionReducerMapBuilder<TodoPendingState>) => {
-    //add
+    // get
+    builder
+      .addCase(getPendingTodos.pending, (state: TodoPendingState) => {
+        state.loading = true;
+      })
+      .addCase(
+        getPendingTodos.fulfilled,
+        (state: TodoPendingState, action: PayloadAction<TodoType[] | []>) => {
+          state.loading = false;
+          state.error = null;
+          state.data = action?.payload || [];
+        },
+      )
+      .addCase(getPendingTodos.rejected, (state: TodoPendingState, action) => {
+        state.loading = false;
+        state.error = action?.error?.message || "";
+      });
+    // add
     builder
       .addCase(addPendingTodo.pending, (state: TodoPendingState) => {
         state.loading = true;
@@ -80,22 +102,36 @@ const todoPendingSlice = createSlice({
   },
 });
 
-export const addPendingTodo = createAsyncThunk("todo/addPending", async (todo: TodoType) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+export const getPendingTodos = createAsyncThunk(
+  "todo/getPending",
+  async (): Promise<TodoType[]> => {
+    return await getTodos(`?status=${TodoStatus.Pending}`);
+  },
+);
 
-  return todo;
-});
+export const addPendingTodo = createAsyncThunk(
+  "todo/addPending",
+  async (todo: Omit<TodoType, "id">): Promise<TodoType> => {
+    return await createTodo(todo);
+  },
+);
 
-export const updatePendingTodo = createAsyncThunk("todo/updatePending", async (todo: TodoType) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+export const updatePendingTodo = createAsyncThunk(
+  "todo/updatePending",
+  async (todo: TodoType): Promise<TodoType> => {
+    return await updateTodo(todo);
+  },
+);
 
-  return todo;
-});
+export const removePendingTodo = createAsyncThunk(
+  "todo/removePending",
+  async ({ todo, status }: { todo: TodoType; status: TodoStatus }): Promise<string> => {
+    const removedTodo: TodoType = { ...todo, status };
+    await updateTodo(removedTodo);
 
-export const removePendingTodo = createAsyncThunk("todo/removePending", async (id: string) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+    return removedTodo.id;
+  },
+);
 
-  return id;
-});
-
+export const { setPendingTodos } = todoPendingSlice.actions;
 export default todoPendingSlice.reducer;

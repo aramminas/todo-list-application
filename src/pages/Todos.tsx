@@ -6,18 +6,22 @@ import AddIcon from "@mui/icons-material/Add";
 
 import TodoTable from "@/components/TodoTable";
 import PageWrapper from "@/components/PageWrapper";
-import TodoFormDialog from "@/components/TodoFormDialog";
-import AlertLoadingWrapper from "@/components/basic/AlertLoadingWrapper";
-import { TodoType, TodoStatus } from "@/components/types";
-import { removePendingTodo } from "@/state/todos/todoPendingSlice";
-import { addToOverdue } from "@/state/todos/todoOverdueSlice";
 import { RootState, AppDispatch } from "@/state/store";
+import TodoFormDialog from "@/components/TodoFormDialog";
+import { TodoType, TodoStatus } from "@/components/types";
+import { addToOverdue } from "@/state/todos/todoOverdueSlice";
+import AlertLoadingWrapper from "@/components/basic/AlertLoadingWrapper";
+import { removePendingTodo, getPendingTodos } from "@/state/todos/todoPendingSlice";
 
 function Todos() {
   const dispatch = useDispatch<AppDispatch>();
   const [openForm, setOpenForm] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<TodoType | null>(null);
   const { data: todos, error, loading } = useSelector((state: RootState) => state.todoPending);
+
+  useEffect(() => {
+    dispatch(getPendingTodos());
+  }, []);
 
   useEffect(() => {
     ((todos) => {

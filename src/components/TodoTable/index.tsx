@@ -58,7 +58,7 @@ const TodoTable = ({ rows, bgColor, loading, handleEdit, pageStatus }: TodoTable
     if (findRemovedTodo) {
       dispatch(addToRemoved(findRemovedTodo));
     }
-    dispatch(removePendingTodo(id));
+    dispatch(removePendingTodo({ todo: findRemovedTodo, status: TodoStatus.Removed }));
   };
 
   const handleCompleted = (
@@ -70,7 +70,7 @@ const TodoTable = ({ rows, bgColor, loading, handleEdit, pageStatus }: TodoTable
       if (findCompletedTodo) {
         dispatch(addToCompleted(findCompletedTodo));
       }
-      dispatch(removePendingTodo(id));
+      dispatch(removePendingTodo({ todo: findCompletedTodo, status: TodoStatus.Completed }));
     }
   };
 

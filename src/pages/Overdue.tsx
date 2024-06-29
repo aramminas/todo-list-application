@@ -1,13 +1,20 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import TodoTable from "@/components/TodoTable";
-import PageWrapper from "@/components/PageWrapper";
-import { TodoStatus } from "@/components/types";
 import { getStatusTextColor } from "@/helpers";
-import { RootState } from "@/state/store";
+import TodoTable from "@/components/TodoTable";
+import { TodoStatus } from "@/components/types";
+import PageWrapper from "@/components/PageWrapper";
+import { AppDispatch, RootState } from "@/state/store";
+import { getOverdueTodos } from "@/state/todos/todoOverdueSlice";
 
 function Overdue() {
+  const dispatch = useDispatch<AppDispatch>();
   const todos = useSelector((state: RootState) => state.todoOverdue.data);
+
+  useEffect(() => {
+    dispatch(getOverdueTodos());
+  }, []);
 
   return (
     <PageWrapper title="Overdue todos">

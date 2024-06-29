@@ -1,7 +1,6 @@
 import { forwardRef, useMemo, useEffect } from "react";
 import dayjs from "dayjs";
 import * as yup from "yup";
-import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -78,8 +77,7 @@ const TodoForm = forwardRef(({ todo, onClose, open }: TodoFormProps, ref) => {
     }
 
     // create
-    const newTodoData: TodoType = {
-      id: uuidv4(),
+    const newTodoData: Omit<TodoType, "id"> = {
       ...data,
       deadline: endOfDay,
       updatedAt: new Date(),

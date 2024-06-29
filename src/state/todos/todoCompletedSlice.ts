@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
 
 import { TodoType, TodoStatus } from "@/components/types";
+import { getTodos } from "@/api/requests";
 
 interface TodoCompletedState {
   data: TodoType[];
@@ -18,9 +19,30 @@ const initialState: TodoCompletedState = {
 const todoCompletedSlice = createSlice({
   name: "todoCompleted",
   initialState,
-  reducers: { _: () => {} },
+  reducers: {
+    setCompletedTodos: (state, action: PayloadAction<TodoType[]>) => {
+      state.data = action.payload;
+    },
+  },
   extraReducers: (builder: ActionReducerMapBuilder<TodoCompletedState>) => {
-    //add
+    // get
+    builder
+      .addCase(getCompletedTodos.pending, (state: TodoCompletedState) => {
+        state.loading = true;
+      })
+      .addCase(
+        getCompletedTodos.fulfilled,
+        (state: TodoCompletedState, action: PayloadAction<TodoType[]>) => {
+          state.loading = false;
+          state.error = null;
+          state.data = action.payload;
+        },
+      )
+      .addCase(getCompletedTodos.rejected, (state: TodoCompletedState, action) => {
+        state.loading = false;
+        state.error = action?.error?.message || "";
+      });
+    // add
     builder
       .addCase(addToCompleted.pending, (state: TodoCompletedState) => {
         state.loading = true;
@@ -46,10 +68,14 @@ const todoCompletedSlice = createSlice({
   },
 });
 
-export const addToCompleted = createAsyncThunk("todo/addCompleted", async (todo: TodoType) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+export const getCompletedTodos = createAsyncThunk(
+  "todo/getCompleted",
+  async (): Promise<TodoType[]> => {
+    return await getTodos(`?status=${TodoStatus.Completed}`);
+  },
+);
 
-  return todo;
-});
+export const addToCompleted = createAsyncThunk("todo/addCompleted", async (todo: TodoType) => todo);
 
+export const { setCompletedTodos } = todoCompletedSlice.actions;
 export default todoCompletedSlice.reducer;

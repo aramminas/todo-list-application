@@ -28,3 +28,17 @@ export const resetInitialData = {
   description: "",
   deadline: undefined,
 };
+
+export type SortedTodos = {
+  pending: TodoType[];
+  completed: TodoType[];
+  overdue: TodoType[];
+  removed: TodoType[];
+};
+
+export const initAcc: SortedTodos = {
+  pending: [],
+  completed: [],
+  overdue: [],
+  removed: [],
+};

@@ -1,7 +1,6 @@
-export type ErrorAction = {
-  error: {
-    message: string;
-    name: string;
-    stack: string;
-  };
-};
+export enum Methods {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+}

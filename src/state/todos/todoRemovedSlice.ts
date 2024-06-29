@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
 
 import { TodoType, TodoStatus } from "@/components/types";
+import { getTodos } from "@/api/requests";
 
 interface TodoRemovedState {
   data: TodoType[];
@@ -18,9 +19,30 @@ const initialState: TodoRemovedState = {
 const todoRemovedSlice = createSlice({
   name: "todoRemoved",
   initialState,
-  reducers: { _: () => {} },
+  reducers: {
+    setRemovedTodos: (state, action: PayloadAction<TodoType[]>) => {
+      state.data = action.payload;
+    },
+  },
   extraReducers: (builder: ActionReducerMapBuilder<TodoRemovedState>) => {
-    //add
+    // get
+    builder
+      .addCase(getRemovedTodos.pending, (state: TodoRemovedState) => {
+        state.loading = true;
+      })
+      .addCase(
+        getRemovedTodos.fulfilled,
+        (state: TodoRemovedState, action: PayloadAction<TodoType[]>) => {
+          state.loading = false;
+          state.error = null;
+          state.data = action.payload;
+        },
+      )
+      .addCase(getRemovedTodos.rejected, (state: TodoRemovedState, action) => {
+        state.loading = false;
+        state.error = action?.error?.message || "";
+      });
+    // add
     builder
       .addCase(addToRemoved.pending, (state: TodoRemovedState) => {
         state.loading = true;
@@ -46,10 +68,17 @@ const todoRemovedSlice = createSlice({
   },
 });
 
-export const addToRemoved = createAsyncThunk("todo/addRemoved", async (todo: TodoType) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+export const getRemovedTodos = createAsyncThunk(
+  "todo/getRemoved",
+  async (): Promise<TodoType[]> => {
+    return await getTodos(`?status=${TodoStatus.Removed}`);
+  },
+);
 
-  return todo;
-});
+export const addToRemoved = createAsyncThunk(
+  "todo/addRemoved",
+  async (todo: TodoType): Promise<TodoType> => todo,
+);
 
+export const { setRemovedTodos } = todoRemovedSlice.actions;
 export default todoRemovedSlice.reducer;
