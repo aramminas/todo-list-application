@@ -1,8 +1,9 @@
 import Chip from "@mui/material/Chip";
 import { getStatusColor } from "@/helpers";
+import { TodoStatus } from "@/components/types";
 
 interface StatusChipProps {
-  status: string;
+  status?: TodoStatus;
 }
 
 const StatusChip = ({ status }: StatusChipProps) => {

@@ -8,7 +8,7 @@ function Copyright(props: TypographyOwnProps) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {"Copyright © "}
       <Link to="/" style={{ textDecoration: "none", fontWeight: 600 }}>
-        <Typography color="text.secondary" variant="span">
+        <Typography color="text.secondary" variant="caption" sx={{ fontSize: 15 }}>
           {appName}
         </Typography>
       </Link>

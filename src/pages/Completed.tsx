@@ -1,13 +1,20 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import TodoTable from "@/components/TodoTable";
-import PageWrapper from "@/components/PageWrapper";
 import { getStatusTextColor } from "@/helpers";
 import { TodoStatus } from "@/components/types";
-import { RootState } from "@/state/store";
+import PageWrapper from "@/components/PageWrapper";
+import { AppDispatch, RootState } from "@/state/store";
+import { getCompletedTodos } from "@/state/todos/todoCompletedSlice";
 
 function Completed() {
+  const dispatch = useDispatch<AppDispatch>();
   const todos = useSelector((state: RootState) => state.todoCompleted.data);
+
+  useEffect(() => {
+    dispatch(getCompletedTodos());
+  }, []);
 
   return (
     <PageWrapper title="Completed todos">

@@ -15,10 +15,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
+import Images from "@/assets/Images";
 import Copyright from "@/components/Layout/components/Copyright";
 import MainListItems from "@/components/Layout/components/MainListItems";
 import { AppBar, Drawer } from "@/components/Layout/styledComponents";
-import Logo from "@/assets/logo.svg";
 
 const defaultTheme = createTheme();
 
@@ -55,7 +55,7 @@ const Layout = () => {
               <MenuIcon />
             </IconButton>
             <Link to="/">
-              <Box component="img" sx={{ height: 34 }} alt="Logo" src={Logo} />
+              <Box component="img" sx={{ height: 34 }} alt="Logo" src={Images.logo} />
             </Link>
           </Toolbar>
         </AppBar>

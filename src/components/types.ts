@@ -3,7 +3,7 @@ export type TodoType = {
   title: string;
   description: string;
   status: TodoStatus;
-  deadline: Date;
+  deadline?: Date;
   updatedAt: Date;
   createdAt: Date;
 };
@@ -17,8 +17,28 @@ export enum TodoStatus {
 
 export type TodoDataType = Omit<TodoType, "id" | "status" | "updatedAt" | "createdAt">;
 
+export type PartialTodoDataType = {
+  description?: string;
+  deadline?: Date;
+  title: string;
+};
+
 export const resetInitialData = {
   title: "",
   description: "",
-  deadline: "",
+  deadline: undefined,
+};
+
+export type SortedTodos = {
+  pending: TodoType[];
+  completed: TodoType[];
+  overdue: TodoType[];
+  removed: TodoType[];
+};
+
+export const initAcc: SortedTodos = {
+  pending: [],
+  completed: [],
+  overdue: [],
+  removed: [],
 };
